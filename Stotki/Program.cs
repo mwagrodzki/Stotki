@@ -6,7 +6,7 @@ namespace Stotki
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("dupa");
+            Console.WriteLine("chujpa");
         }
     }
 }
