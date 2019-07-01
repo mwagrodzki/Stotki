@@ -3,8 +3,3 @@
 .idea/
 obj/
 bin/
-*.cache
-*.xml
-*.iml
-*.csproj
-*.sln
