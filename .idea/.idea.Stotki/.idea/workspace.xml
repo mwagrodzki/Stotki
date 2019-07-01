@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b50ce4c9-9d0e-4422-85a1-550bf7bd1d2e" name="Default Changelist" comment="" />
+    <list default="true" id="b50ce4c9-9d0e-4422-85a1-550bf7bd1d2e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Stotki/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Stotki/Program.cs" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,12 +15,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Stotki/Program.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="9" column="9" lean-forward="true" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+            <state relative-caret-position="126">
+              <caret line="7" column="9" lean-forward="true" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
               <folding>
-                <marker date="1561987039749" expanded="true" signature="31:172" ph="{...}" />
-                <marker date="1561987039749" expanded="true" signature="51:170" ph="{...}" />
-                <marker date="1561987039749" expanded="true" signature="97:164" ph="{...}" />
+                <marker date="1561987476807" expanded="true" signature="31:164" ph="{...}" />
+                <marker date="1561987476807" expanded="true" signature="51:162" ph="{...}" />
+                <marker date="1561987476807" expanded="true" signature="97:156" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -31,6 +33,20 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Stotki/Program.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Stotki/Program.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/.idea.Stotki/.idea/vcs.xml" />
+      </list>
+    </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="148" />
@@ -57,6 +73,12 @@
               <item name="" type="784c90a0:SolutionExplorerRootNode" />
               <item name="Stotki" type="24d0babc:SolutionExplorerModelNode" />
               <item name="Stotki" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+            <path>
+              <item name="" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="Stotki" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Stotki" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Dependencies" type="24d0babc:SolutionExplorerModelNode" />
             </path>
           </expand>
           <select />
@@ -114,12 +136,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1561987037102</updated>
-      <workItem from="1561987038512" duration="247000" />
+      <workItem from="1561987038512" duration="500000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="247000" />
+    <option name="totallyTimeSpent" value="500000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -139,10 +161,10 @@
       <window_info anchor="bottom" id="NuGet" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Unit Tests" />
-      <window_info active="true" anchor="bottom" id="Terminal" sideWeight="0.6235864" visible="true" weight="0.32945284" />
-      <window_info anchor="bottom" id="Event Log" sideWeight="0.37641358" side_tool="true" visible="true" weight="0.32945284" />
+      <window_info anchor="bottom" id="Version Control" sideWeight="0.49919224" weight="0.32945284" />
+      <window_info anchor="bottom" id="Unit Tests" sideWeight="0.49919224" weight="0.32945284" />
+      <window_info active="true" anchor="bottom" id="Terminal" sideWeight="0.62277865" visible="true" weight="0.32945284" />
+      <window_info anchor="bottom" id="Event Log" sideWeight="0.37722132" side_tool="true" weight="0.32945284" />
       <window_info anchor="bottom" id="Performance Profiler" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -177,12 +199,12 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Stotki/Program.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="9" lean-forward="true" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+        <state relative-caret-position="126">
+          <caret line="7" column="9" lean-forward="true" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
           <folding>
-            <marker date="1561987039749" expanded="true" signature="31:172" ph="{...}" />
-            <marker date="1561987039749" expanded="true" signature="51:170" ph="{...}" />
-            <marker date="1561987039749" expanded="true" signature="97:164" ph="{...}" />
+            <marker date="1561987476807" expanded="true" signature="31:164" ph="{...}" />
+            <marker date="1561987476807" expanded="true" signature="51:162" ph="{...}" />
+            <marker date="1561987476807" expanded="true" signature="97:156" ph="{...}" />
           </folding>
         </state>
       </provider>
