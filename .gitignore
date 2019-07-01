@@ -1,0 +1,10 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+.idea/
+obj/
+bin/
+*.cache
+*.xml
+*.iml
+*.csproj
+*.sln
