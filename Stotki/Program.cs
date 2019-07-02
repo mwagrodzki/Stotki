@@ -5,8 +5,8 @@ namespace Stotki
 {
     public class playerMaps
     {
-        char[,] playingMap = new char[10,10]; // Array that represents map 10*10
-        char[,] shootingMap = new char[10,10];
+        public char[,] playerShipsMap = new char[10,10]; // Array that represents map 10*10
+        public char[,] playerShootingMap = new char[10,10];
         
         /// <summary>
         ///     Inserting ships based on the given coordinates, from one point(x,y) to second point(x2,y2)
@@ -51,14 +51,6 @@ namespace Stotki
         }
 
         /// <summary>
-        ///     Saves player shot from given cordinates
-        /// </summary>
-        /// <param name="xCoordinate"> X coordinate of shot</param>
-        /// <param name="yCoordinate"> Y coordinate of shot</param>
-        /// <returns></returns>
-        
-    
-        /// <summary>
         ///     Displays provided map
         /// </summary>
         /// <param name="map">Two dimensional representation of a 10x10 map</param>
@@ -98,7 +90,7 @@ namespace Stotki
         /// </summary>
         public void DisplayPlayingMap()
         {
-            MapDisplay(this.playingMap);
+            MapDisplay(this.playerShipsMap);
         }
 
         /// <summary>
@@ -106,7 +98,7 @@ namespace Stotki
         /// </summary>
         public void DisplayShootingMap()
         {
-            MapDisplay(this.shootingMap);
+            MapDisplay(this.playerShootingMap);
         }
     }
     
@@ -144,6 +136,13 @@ namespace Stotki
             userInputY = secondShootingCoord;
         }
         
+        
+        /// <summary>
+        ///     Saves player shot from given cordinates
+        /// </summary>
+        /// <param name="xCoordinate"> X coordinate of shot</param>
+        /// <param name="yCoordinate"> Y coordinate of shot</param>
+        /// <returns></returns>
         static void PlayerShoot(int xCoordinate, int yCoordinate, char[,] player1ShootingMap, char[,] player2ShipsMap)
         {
             player2ShipsMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
