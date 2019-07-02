@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Stotki
 {
@@ -59,6 +60,56 @@ namespace Stotki
         {
             return "Shoot received";
         }
+    
+        /// <summary>
+        ///     Displays provided map
+        /// </summary>
+        /// <param name="map">Two dimensional representation of a 10x10 map</param>
+        private void MapDisplay(char[,] map)
+        {
+            string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
+            Console.WriteLine("  | A | B | C | D | E | F | G | H | I | J |");
+            Console.WriteLine(horizontalLine);
+            for (int i = 0; i < 10; i++)
+            {
+                if (i != 9)
+                {
+                    Console.Write($"{i+1} |");
+                }
+                else
+                {
+                    Console.Write($"{i+1}|");
+                }
+                
+                for (int j = 0; j < 10; j++)
+                {
+                    if (map[i, j] == '\0')
+                    {
+                        Console.Write(" ");
+                    }
+                    Console.Write($" {map[i,j]} |");
+                    
+                }
+                Console.WriteLine();
+                Console.WriteLine(horizontalLine);
+            }
+        }
+        
+        /// <summary>
+        ///     Display Playing Maps
+        /// </summary>
+        public void DisplayPlayingMap()
+        {
+            MapDisplay(this.playingMap);
+        }
+
+        /// <summary>
+        ///     Display Shooting Map
+        /// </summary>
+        public void DisplayShootingMap()
+        {
+            MapDisplay(this.shootingMap);
+        }
     }
     
     public class ShipsGame
@@ -68,6 +119,8 @@ namespace Stotki
             playerMaps player1PlayingMap = new playerMaps();
             Console.Write(player1PlayingMap.Shoot(2, 4));
             player1PlayingMap.ShipPlacementFilter(0,0,5,0);
+            
+            player1PlayingMap.DisplayPlayingMap();
         }
     }
 }
