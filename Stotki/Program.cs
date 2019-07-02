@@ -23,7 +23,7 @@ namespace Stotki
                     ? firstX : secondX;
                 int secondCoordinate = firstX < secondX 
                     ? secondX : firstX;
-                ShipPlacementIteration(firstCoordinate, secondCoordinate, firstY);
+                ShipPlacementIteration(firstCoordinate, secondCoordinate, firstY, 'y');
             }
             else if (firstY != secondY && secondX == firstX) // Checking if iteration should be Vertical
             {
@@ -31,7 +31,7 @@ namespace Stotki
                     ? firstY : secondY;
                 int secondCoordinate = firstY < secondY 
                     ? secondY : firstY;
-                ShipPlacementIteration(firstCoordinate, secondCoordinate, firstX);
+                ShipPlacementIteration(firstCoordinate, secondCoordinate, firstX, 'x');
             }
         }
         
@@ -41,11 +41,14 @@ namespace Stotki
         /// <param name="firstCoord">First coord to begin iteration</param>
         /// <param name="secondCoord">Second coord to begin iteration</param>
         /// <param name="iterationOver">coordinate to iterate over</param>
-        private void ShipPlacementIteration(int firstCoord, int secondCoord, int iterationOver)
+        private void ShipPlacementIteration(int firstCoord, int secondCoord, int iterationOver, char iterationSign)
         {
             for (int i = firstCoord; i <= secondCoord; i++)
             {
-                playerShipsMap[i, iterationOver] = '#';
+                if (iterationSign == 'y')
+                    playerShipsMap[i, iterationOver] = '#';
+                else
+                    playerShipsMap[iterationOver, i] = '#';
                 Console.WriteLine($"Placing Ship at {i},{iterationOver} "); // Checking iteration at ship placement
             }
         }
@@ -58,19 +61,11 @@ namespace Stotki
         {
             string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
             Console.WriteLine();
-            Console.WriteLine("  | A | B | C | D | E | F | G | H | I | J |");
+            Console.WriteLine("  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
             Console.WriteLine(horizontalLine);
             for (int i = 0; i < 10; i++)
             {
-                if (i != 9)
-                {
-                    Console.Write($"{i+1} |");
-                }
-                else
-                {
-                    Console.Write($"{i+1}|");
-                }
-                
+                Console.Write($"{i} |");
                 for (int j = 0; j < 10; j++)
                 {
                     if (map[i, j] == '\0')
@@ -88,7 +83,7 @@ namespace Stotki
         /// <summary>
         ///     Display Playing Maps
         /// </summary>
-        public void DisplayPlayingMap()
+        public void DisplayShipsMap()
         {
             MapDisplay(this.playerShipsMap);
         }
@@ -111,6 +106,21 @@ namespace Stotki
             
             UserShootingInput(out int xShootingCoord, out int yShootingCoord);
             PlayerShoot(xShootingCoord, yShootingCoord, FirstPlayerClass.playerShootingMap, SecondPlayerClass.playerShipsMap);
+            
+            FirstPlayerClass.ShipPlacementFilter(3,2,9,2);
+            FirstPlayerClass.DisplayShipsMap();
+            FirstPlayerClass.DisplayShootingMap();
+            
+            
+        }
+
+        /// <summary>
+        ///     Validation to user input when placeing ships
+        /// </summary>
+        /// <returns></returns>
+        static string UserShipPlacementValidation()
+        {
+            
         }
 
         /// <summary>
