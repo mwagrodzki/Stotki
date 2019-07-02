@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace Stotki
 {
-    public class playerMaps
+    public class PlayerMaps
     {
-        public char[,] playerShipsMap = new char[10,10]; // Array that represents map 10*10
-        public char[,] playerShootingMap = new char[10,10];
+        public char[,] PlayerShipsMap = new char[10,10]; // Array that represents map 10*10
+        public char[,] PlayerShootingMap = new char[10,10];
         
         /// <summary>
         ///     Inserting ships based on the given coordinates, from one point(x,y) to second point(x2,y2)
@@ -41,14 +41,15 @@ namespace Stotki
         /// <param name="firstCoord">First coord to begin iteration</param>
         /// <param name="secondCoord">Second coord to begin iteration</param>
         /// <param name="iterationOver">coordinate to iterate over</param>
+        /// <param name="iterationSign"></param>
         private void ShipPlacementIteration(int firstCoord, int secondCoord, int iterationOver, char iterationSign)
         {
             for (int i = firstCoord; i <= secondCoord; i++)
             {
                 if (iterationSign == 'y')
-                    playerShipsMap[i, iterationOver] = '#';
+                    PlayerShipsMap[i, iterationOver] = '#';
                 else
-                    playerShipsMap[iterationOver, i] = '#';
+                    PlayerShipsMap[iterationOver, i] = '#';
                 Console.WriteLine($"Placing Ship at {i},{iterationOver} "); // Checking iteration at ship placement
             }
         }
@@ -117,7 +118,7 @@ namespace Stotki
         /// </summary>
         public void DisplayShipsMap()
         {
-            MapDisplay(this.playerShipsMap,-1,-1);
+            MapDisplay(PlayerShipsMap,-1,-1);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Stotki
         /// <param name="secondCoord">Second coord of last shot</param>
         public void DisplayShootingMap(int firstCoord=-1, int secondCoord=-1)
         {
-            MapDisplay(this.playerShootingMap, firstCoord, secondCoord);
+            MapDisplay(PlayerShootingMap, firstCoord, secondCoord);
         }
     }
     
@@ -135,21 +136,21 @@ namespace Stotki
     {
         static void Main(string[] args)
         {
-            playerMaps FirstPlayerClass = new playerMaps();
-            playerMaps SecondPlayerClass = new playerMaps();
+            PlayerMaps firstPlayerClass = new PlayerMaps();
+            PlayerMaps secondPlayerClass = new PlayerMaps();
             
             UserShootingInput(out int xShootingCoord, out int yShootingCoord);
-            PlayerShoot(xShootingCoord, yShootingCoord, FirstPlayerClass.playerShootingMap, SecondPlayerClass.playerShipsMap);
+            PlayerShoot(xShootingCoord, yShootingCoord, firstPlayerClass.PlayerShootingMap, secondPlayerClass.PlayerShipsMap);
             
-            FirstPlayerClass.ShipPlacementFilter(3,2,9,2);
-            FirstPlayerClass.DisplayShipsMap();
-            FirstPlayerClass.DisplayShootingMap(xShootingCoord, yShootingCoord);
+            firstPlayerClass.ShipPlacementFilter(3,2,9,2);
+            firstPlayerClass.DisplayShipsMap();
+            firstPlayerClass.DisplayShootingMap(xShootingCoord, yShootingCoord);
             
             
         }
 
         /// <summary>
-        ///     Validation to user input when placeing ships
+        ///     Validation to user input when placing ships
         /// </summary>
         /// <returns></returns>
         static string UserShipPlacementValidation()
@@ -164,9 +165,9 @@ namespace Stotki
         /// <param name="userInputY"> Y coord</param>
         static void UserShootingInput(out int userInputX, out int userInputY)
         {
-            string validation = "";
-            int firstShootingCoord = 0;
-            int secondShootingCoord = 0;
+            string validation;
+            int firstShootingCoord;
+            int secondShootingCoord;
             do
             {
                 Console.WriteLine("Please enter Shooting Coords separated by ',' e.g.: (1,3) ");
@@ -182,10 +183,12 @@ namespace Stotki
         
         
         /// <summary>
-        ///     Saves player shot from given cordinates
+        ///     Saves player shot from given coordinates
         /// </summary>
         /// <param name="xCoordinate"> X coordinate of shot</param>
         /// <param name="yCoordinate"> Y coordinate of shot</param>
+        /// <param name="player1ShootingMap"></param>
+        /// <param name="player2ShipsMap"></param>
         /// <returns></returns>
         static void PlayerShoot(int xCoordinate, int yCoordinate, char[,] player1ShootingMap, char[,] player2ShipsMap)
         {
@@ -197,21 +200,23 @@ namespace Stotki
         }
 
         /// <summary>
-        ///     Validatin of the given user input
+        ///     Validating of the given user input
         /// </summary>
         /// <param name="stringinputCoords"> User input in string</param>
+        /// <param name="firstCoord"></param>
+        /// <param name="secondCoord"></param>
         /// <returns></returns>
         static string UserShootingInputValidation(string stringinputCoords, out int firstCoord, out int secondCoord)
         {
             firstCoord = -1;
             secondCoord = -1;
 
-            string[] splitinputCoords = stringinputCoords.Split(',');
-            if (splitinputCoords.Length != 2)
+            string[] splitInputCoords = stringinputCoords.Split(',');
+            if (splitInputCoords.Length != 2)
                 return "Wrong!";
 
-            bool firstCoordCheck = int.TryParse(splitinputCoords[0], out int intFirstCoord);
-            bool secondCoordCheck = int.TryParse(splitinputCoords[1], out int intSecondCoord);
+            bool firstCoordCheck = int.TryParse(splitInputCoords[0], out int intFirstCoord);
+            bool secondCoordCheck = int.TryParse(splitInputCoords[1], out int intSecondCoord);
 
             if (!firstCoordCheck || !secondCoordCheck || intFirstCoord > 10 || intSecondCoord > 10)
                 return "Wrong!";
