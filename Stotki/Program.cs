@@ -60,24 +60,24 @@ namespace Stotki
             Console.WriteLine();
             Console.WriteLine("  | A | B | C | D | E | F | G | H | I | J |");
             Console.WriteLine(horizontalLine);
-            for (int i = 0; i < 10; i++)
+            for (int row = 0; row < 10; row++)
             {
-                if (i != 9)
+                if (row != 9)
                 {
-                    Console.Write($"{i+1} |");
+                    Console.Write($"{row+1} |");
                 }
                 else
                 {
-                    Console.Write($"{i+1}|");
+                    Console.Write($"{row+1}|");
                 }
                 
-                for (int j = 0; j < 10; j++)
+                for (int column = 0; column < 10; column++)
                 {
-                    if (map[i, j] == '\0')
+                    if (map[row, column] == '\0')
                     {
                         Console.Write(" ");
                     }
-                    Console.Write($" {map[i,j]} |");
+                    Console.Write($" {map[row,column]} |");
                     
                 }
                 Console.WriteLine();
