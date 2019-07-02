@@ -16,7 +16,7 @@ namespace Stotki
         /// <param name="secondY"> integer, Y value of the second coordinate</param>
         public void ShipPlacementFilter(int firstX, int firstY, int secondX, int secondY)
         {
-            if (firstX != secondX && firstY==secondY)
+            if (firstX != secondX && firstY==secondY) // Checking if iteration should be Horizontal
             {
                 int firstCoordinate = firstX < secondX 
                     ? firstX : secondX;
@@ -24,7 +24,7 @@ namespace Stotki
                     ? secondX : firstX;
                 ShipPlacementIteration(firstCoordinate, secondCoordinate, firstY);
             }
-            else if (firstY != secondY && secondX == firstX)
+            else if (firstY != secondY && secondX == firstX) // Checking if iteration should be Vertical
             {
                 int firstCoordinate = firstY < secondY 
                     ? firstY : secondY;
@@ -61,13 +61,62 @@ namespace Stotki
         }
     }
     
-    public class ShipsGame
+    public class BattleShipsGame
     {
         static void Main(string[] args)
         {
             playerMaps player1PlayingMap = new playerMaps();
             Console.Write(player1PlayingMap.Shoot(2, 4));
-            player1PlayingMap.ShipPlacementFilter(0,0,5,0);
+            UserShootingInput(out int xShootingCoord, out int yShootingCoord);
+            Console.Write(player1PlayingMap.Shoot(xShootingCoord, yShootingCoord));
+        }
+
+        /// <summary>
+        ///     Method responsible for getting user input for shooting
+        /// </summary>
+        /// <param name="userInputX"> X coord</param>
+        /// <param name="userInputY"> Y coord</param>
+        static void UserShootingInput(out int userInputX, out int userInputY)
+        {
+            string validation = "";
+            int firstShootingCoord = 0;
+            int secondShootingCoord = 0;
+            do
+            {
+                Console.WriteLine("Please enter Shooting Coords separated by ',' e.g.: (1,3) ");
+                string stringinputCoords = Console.ReadLine();
+                validation = UserShootingInputValidation(stringinputCoords, out firstShootingCoord, out secondShootingCoord);
+                if (validation == "Wrong!")
+                    Console.WriteLine("Please provide Correct input :/");
+            } while (validation == "Wrong!");
+
+            userInputX = firstShootingCoord;
+            userInputY = secondShootingCoord;
+        }
+    
+        /// <summary>
+        ///     Validatin of the given user input
+        /// </summary>
+        /// <param name="stringinputCoords"> User input in string</param>
+        /// <returns></returns>
+        static string UserShootingInputValidation(string stringinputCoords, out int firstCoord, out int secondCoord)
+        {
+            firstCoord = -1;
+            secondCoord = -1;
+            
+            string[] splitinputCoords = stringinputCoords.Split(',');
+            if (splitinputCoords.Length != 2)
+                return "Wrong!";
+            
+            bool firstCoordCheck = int.TryParse(splitinputCoords[0], out int intFirstCoord);
+            bool secondCoordCheck = int.TryParse(splitinputCoords[1], out int intSecondCoord);
+            
+            if (!firstCoordCheck || !secondCoordCheck)
+                return "Wrong!";
+
+            firstCoord = intFirstCoord;
+            secondCoord = intSecondCoord;
+            return "Correct!";
         }
     }
 }
