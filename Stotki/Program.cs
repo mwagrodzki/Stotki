@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace Stotki
 {
     public class playerMaps
     {
-        public char[,] playerShipsMap = new char[10,10]; // Array that represents map 10*10
-        public char[,] playerShootingMap = new char[10,10];
+        char[,] playingMap = new char[10,10]; // Array that represents map 10*10
+        char[,] shootingMap = new char[10,10];
         
         /// <summary>
         ///     Inserting ships based on the given coordinates, from one point(x,y) to second point(x2,y2)
@@ -49,6 +49,65 @@ namespace Stotki
                 Console.WriteLine($"Placing Ship at {i},{iterationOver} "); // Checking iteration at ship placement
             }
         }
+
+        /// <summary>
+        ///     Saves player shot from given cordinates
+        /// </summary>
+        /// <param name="xCoordinate"> X coordinate of shot</param>
+        /// <param name="yCoordinate"> Y coordinate of shot</param>
+        /// <returns></returns>
+        
+    
+        /// <summary>
+        ///     Displays provided map
+        /// </summary>
+        /// <param name="map">Two dimensional representation of a 10x10 map</param>
+        private void MapDisplay(char[,] map)
+        {
+            string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
+            Console.WriteLine();
+            Console.WriteLine("  | A | B | C | D | E | F | G | H | I | J |");
+            Console.WriteLine(horizontalLine);
+            for (int i = 0; i < 10; i++)
+            {
+                if (i != 9)
+                {
+                    Console.Write($"{i+1} |");
+                }
+                else
+                {
+                    Console.Write($"{i+1}|");
+                }
+                
+                for (int j = 0; j < 10; j++)
+                {
+                    if (map[i, j] == '\0')
+                    {
+                        Console.Write(" ");
+                    }
+                    Console.Write($" {map[i,j]} |");
+                    
+                }
+                Console.WriteLine();
+                Console.WriteLine(horizontalLine);
+            }
+        }
+        
+        /// <summary>
+        ///     Display Playing Maps
+        /// </summary>
+        public void DisplayPlayingMap()
+        {
+            MapDisplay(this.playingMap);
+        }
+
+        /// <summary>
+        ///     Display Shooting Map
+        /// </summary>
+        public void DisplayShootingMap()
+        {
+            MapDisplay(this.shootingMap);
+        }
     }
     
     public class BattleShipsGame
@@ -60,21 +119,6 @@ namespace Stotki
             
             UserShootingInput(out int xShootingCoord, out int yShootingCoord);
             PlayerShoot(xShootingCoord, yShootingCoord, FirstPlayerClass.playerShootingMap, SecondPlayerClass.playerShipsMap);
-        }
-        
-        /// <summary>
-        ///     Saves player shot from given cordinates
-        /// </summary>
-        /// <param name="xCoordinate"> X coordinate of shot</param>
-        /// <param name="yCoordinate"> Y coordinate of shot</param>
-        /// <returns></returns>
-        static void PlayerShoot(int xCoordinate, int yCoordinate, char[,] player1ShootingMap, char[,] player2ShipsMap)
-        {
-            player2ShipsMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
-                ? 'X' : '\0' ;
-            
-            player1ShootingMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
-                ? 'X' : 'O' ;
         }
 
         /// <summary>
@@ -98,6 +142,15 @@ namespace Stotki
 
             userInputX = firstShootingCoord;
             userInputY = secondShootingCoord;
+        }
+        
+        static void PlayerShoot(int xCoordinate, int yCoordinate, char[,] player1ShootingMap, char[,] player2ShipsMap)
+        {
+            player2ShipsMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
+                ? 'X' : '\0' ;
+            
+            player1ShootingMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
+                ? 'X' : 'O' ;
         }
 
         /// <summary>
