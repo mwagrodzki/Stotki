@@ -54,25 +54,57 @@ namespace Stotki
         }
 
         /// <summary>
+        ///     Prints character colored depending on parameters
+        /// </summary>
+        /// <param name="character">Character to be printed</param>
+        /// <param name="shot">Information if this was the last shot</param>
+        private void PrintColored(char character, bool shot)
+        {
+            if(character == '#') Console.ForegroundColor = ConsoleColor.Yellow;
+            if(character == 'O' && shot)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+            if(character == 'O' && !shot) Console.ForegroundColor = ConsoleColor.Blue;
+            if(character == 'X' && shot)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            if(character == 'X' && !shot) Console.ForegroundColor = ConsoleColor.Red;
+            
+            Console.Write(character == '\0' ? "   " : $" {character} ");
+            Console.ResetColor();
+        }
+
+        /// <summary>
         ///     Displays provided map
         /// </summary>
         /// <param name="map">Two dimensional representation of a 10x10 map</param>
-        private void MapDisplay(char[,] map)
+        /// <param name="firstCoord">First coord of last shot</param>
+        /// <param name="secondCoord">Second coord of last shot</param>
+        private void MapDisplay(char[,] map, int firstCoord, int secondCoord)
         {
             string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
             Console.WriteLine();
             Console.WriteLine("  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
             Console.WriteLine(horizontalLine);
-            for (int i = 0; i < 10; i++)
+            for (int row = 0; row < 10; row++)
             {
-                Console.Write($"{i} |");
-                for (int j = 0; j < 10; j++)
+                Console.Write($"{row} |");
+                for (int column = 0; column < 10; column++)
                 {
-                    if (map[i, j] == '\0')
+                    if (row == firstCoord && column == secondCoord)
                     {
-                        Console.Write(" ");
+                        PrintColored(map[row,column], true);
                     }
-                    Console.Write($" {map[i,j]} |");
+                    else
+                    {
+                        PrintColored(map[row,column], false);
+                    }
+                    
+                    Console.Write("|");
                     
                 }
                 Console.WriteLine();
@@ -85,15 +117,17 @@ namespace Stotki
         /// </summary>
         public void DisplayShipsMap()
         {
-            MapDisplay(this.playerShipsMap);
+            MapDisplay(this.playerShipsMap,-1,-1);
         }
 
         /// <summary>
         ///     Display Shooting Map
         /// </summary>
-        public void DisplayShootingMap()
+        /// <param name="firstCoord">First coord of last shot</param>
+        /// <param name="secondCoord">Second coord of last shot</param>
+        public void DisplayShootingMap(int firstCoord=-1, int secondCoord=-1)
         {
-            MapDisplay(this.playerShootingMap);
+            MapDisplay(this.playerShootingMap, firstCoord, secondCoord);
         }
     }
     
@@ -109,7 +143,7 @@ namespace Stotki
             
             FirstPlayerClass.ShipPlacementFilter(3,2,9,2);
             FirstPlayerClass.DisplayShipsMap();
-            FirstPlayerClass.DisplayShootingMap();
+            FirstPlayerClass.DisplayShootingMap(xShootingCoord, yShootingCoord);
             
             
         }
@@ -120,7 +154,7 @@ namespace Stotki
         /// <returns></returns>
         static string UserShipPlacementValidation()
         {
-            
+            return "";
         }
 
         /// <summary>
