@@ -5,7 +5,7 @@ using System.Runtime.ExceptionServices;
 
 namespace Stotki
 {
-    public class playerMaps
+    public class PlayerMaps
     {
         public char[,] playerShipsMap = new char[10,10]; // Array that represents map 10*10
         public char[,] playerShootingMap = new char[10,10];
@@ -43,6 +43,7 @@ namespace Stotki
         /// <param name="firstCoord">First coord to begin iteration</param>
         /// <param name="secondCoord">Second coord to begin iteration</param>
         /// <param name="iterationOver">coordinate to iterate over</param>
+        /// <param name="iterationSign"></param>
         private void ShipPlacementIteration(int firstCoord, int secondCoord, int iterationOver, char iterationSign)
         {
             for (int i = firstCoord; i <= secondCoord; i++)
@@ -56,25 +57,57 @@ namespace Stotki
         }
 
         /// <summary>
+        ///     Prints character colored depending on parameters
+        /// </summary>
+        /// <param name="character">Character to be printed</param>
+        /// <param name="shot">Information if this was the last shot</param>
+        private void PrintColored(char character, bool shot)
+        {
+            if(character == '#') Console.ForegroundColor = ConsoleColor.Yellow;
+            if(character == 'O' && shot)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+            if(character == 'O' && !shot) Console.ForegroundColor = ConsoleColor.Blue;
+            if(character == 'X' && shot)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            if(character == 'X' && !shot) Console.ForegroundColor = ConsoleColor.Red;
+            
+            Console.Write(character == '\0' ? "   " : $" {character} ");
+            Console.ResetColor();
+        }
+
+        /// <summary>
         ///     Displays provided map
         /// </summary>
         /// <param name="map">Two dimensional representation of a 10x10 map</param>
-        private void MapDisplay(char[,] map)
+        /// <param name="firstCoord">First coord of last shot</param>
+        /// <param name="secondCoord">Second coord of last shot</param>
+        private void MapDisplay(char[,] map, int firstCoord, int secondCoord)
         {
             string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
             Console.WriteLine();
             Console.WriteLine("  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
             Console.WriteLine(horizontalLine);
-            for (int i = 0; i < 10; i++)
+            for (int row = 0; row < 10; row++)
             {
-                Console.Write($"{i} |");
-                for (int j = 0; j < 10; j++)
+                Console.Write($"{row} |");
+                for (int column = 0; column < 10; column++)
                 {
-                    if (map[i, j] == '\0')
+                    if (row == firstCoord && column == secondCoord)
                     {
-                        Console.Write(" ");
+                        PrintColored(map[row,column], true);
                     }
-                    Console.Write($" {map[i,j]} |");
+                    else
+                    {
+                        PrintColored(map[row,column], false);
+                    }
+                    
+                    Console.Write("|");
                     
                 }
                 Console.WriteLine();
@@ -87,15 +120,17 @@ namespace Stotki
         /// </summary>
         public void DisplayShipsMap()
         {
-            MapDisplay(this.playerShipsMap);
+            MapDisplay(playerShipsMap,-1,-1);
         }
 
         /// <summary>
         ///     Display Shooting Map
         /// </summary>
-        public void DisplayShootingMap()
+        /// <param name="firstCoord">First coord of last shot</param>
+        /// <param name="secondCoord">Second coord of last shot</param>
+        public void DisplayShootingMap(int firstCoord=-1, int secondCoord=-1)
         {
-            MapDisplay(this.playerShootingMap);
+            MapDisplay(playerShootingMap, firstCoord, secondCoord);
         }
     }
 
@@ -112,8 +147,8 @@ namespace Stotki
         
         static void Main(string[] args)
         {
-            playerMaps firstPlayerClass = new playerMaps();
-            playerMaps secondPlayerClass = new playerMaps();
+            PlayerMaps firstPlayerClass = new PlayerMaps();
+            PlayerMaps secondPlayerClass = new PlayerMaps();
             
             UserShootingInput(out int xShootingCoord, out int yShootingCoord);
             PlayerShoot(xShootingCoord, yShootingCoord, firstPlayerClass.playerShootingMap, secondPlayerClass.playerShipsMap);
@@ -170,7 +205,7 @@ namespace Stotki
         }
         
         /// <summary>
-        ///     Validation to user input when placeing ships
+        ///     Validation to user input when placing ships
         /// </summary>
         /// <returns></returns>
         static string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords)
@@ -210,10 +245,12 @@ namespace Stotki
         }
 
         /// <summary>
-        ///     Saves player shot from given cordinates
+        ///     Saves player shot from given coordinates
         /// </summary>
         /// <param name="xCoordinate"> X coordinate of shot</param>
         /// <param name="yCoordinate"> Y coordinate of shot</param>
+        /// <param name="player1ShootingMap"></param>
+        /// <param name="player2ShipsMap"></param>
         /// <returns></returns>
         static void PlayerShoot(int yCoordinate, int xCoordinate, char[,] player1ShootingMap, char[,] player2ShipsMap)
         {
@@ -225,21 +262,23 @@ namespace Stotki
         }
 
         /// <summary>
-        ///     Validatin of the given user input
+        ///     Validating of the given user input
         /// </summary>
         /// <param name="stringinputCoords"> User input in string</param>
+        /// <param name="firstCoord"></param>
+        /// <param name="secondCoord"></param>
         /// <returns></returns>
         static string UserCoordsPairValidation(string stringinputCoords, out int firstCoord, out int secondCoord)
         {
             firstCoord = -1;
             secondCoord = -1;
 
-            string[] splitinputCoords = stringinputCoords.Split(',');
-            if (splitinputCoords.Length != 2)
+            string[] splitInputCoords = stringinputCoords.Split(',');
+            if (splitInputCoords.Length != 2)
                 return "Wrong!";
 
-            bool firstCoordCheck = int.TryParse(splitinputCoords[0], out firstCoord);
-            bool secondCoordCheck = int.TryParse(splitinputCoords[1], out secondCoord);
+            bool firstCoordCheck = int.TryParse(splitInputCoords[0], out firstCoord);
+            bool secondCoordCheck = int.TryParse(splitInputCoords[1], out secondCoord);
 
             if (!firstCoordCheck || !secondCoordCheck || firstCoord > 10 || secondCoord > 10)
                 return "Wrong!";
