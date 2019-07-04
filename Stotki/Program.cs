@@ -7,9 +7,9 @@ namespace Stotki
 {
     public class Player
     {
-        public int life = 19;
-        public char[,] playerShipsMap = new char[10,10]; // Array that represents map 10*10
-        public char[,] playerShootingMap = new char[10,10];
+        public int Life = 19;
+        public char[,] PlayerShipsMap = new char[10,10]; // Array that represents map 10*10
+        public char[,] PlayerShootingMap = new char[10,10];
         
         /// <summary>
         ///     Inserting ships based on the given coordinates, from one point(x,y) to second point(x2,y2)
@@ -50,10 +50,9 @@ namespace Stotki
             for (int i = firstCoord; i <= secondCoord; i++)
             {
                 if (iterationSign == 'y')
-                    playerShipsMap[i, iterationOver] = '#';
+                    PlayerShipsMap[i, iterationOver] = '#';
                 else
-                    playerShipsMap[iterationOver, i] = '#';
-                Console.WriteLine($"Placing Ship at {i},{iterationOver} "); // Checking iteration at ship placement
+                    PlayerShipsMap[iterationOver, i] = '#';
             }
         }
 
@@ -78,18 +77,29 @@ namespace Stotki
                 if(character == 'O') Console.ForegroundColor = ConsoleColor.Blue;
                 if(character == 'x') // Shot
                 {
-                    Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Black;
                 }
                 if(character == 'X') Console.ForegroundColor = ConsoleColor.Red;
-            
-                Console.Write(character);
-                Console.ResetColor();
+
+                if ("#OoXx".Contains(character))
+                {
+                    Console.Write($" {character} ");
+                    Console.ResetColor();
+                }
+                else if (character == '^')
+                {
+                    Console.Write("   ");
+                }
+                else
+                {
+                    Console.Write(character);
+                }
             }
 
             if (xCoordinate != -1 && yCoordinate != -1)
             {
-                playerShootingMap[xCoordinate, yCoordinate] = playerShootingMap[xCoordinate, yCoordinate] == 'o' ? 'O' : 'X';
+                PlayerShootingMap[xCoordinate, yCoordinate] = PlayerShootingMap[xCoordinate, yCoordinate] == 'x' ? 'X' : 'O';
             }
         }
         
@@ -105,7 +115,7 @@ namespace Stotki
             string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
 
             maps.Add("\n"+string.Concat(Enumerable.Repeat(" ", 20))+"Player"+string.Concat(Enumerable.Repeat(" ", 18)));
-            maps.Add(string.Concat(Enumerable.Repeat(" ", 20))+"Enemy");
+            maps.Add(string.Concat(Enumerable.Repeat(" ", 19))+"Enemy");
             maps.Add("\n"+top);
             maps.Add(top);
             maps.Add("\n"+horizontalLine);
@@ -118,8 +128,8 @@ namespace Stotki
                 
                 for (int column = 0; column < 10; column++)
                 {
-                    playerMap += playerShipsMap[row, column] == '\0' ? "   |" : $" {playerShipsMap[row, column]} |";
-                    shootingMap += playerShootingMap[row, column] == '\0' ? "   |" : $" {playerShootingMap[row, column]} |";
+                    playerMap += PlayerShipsMap[row, column] == '\0' ? "^|" : $"{PlayerShipsMap[row, column]}|";
+                    shootingMap += PlayerShootingMap[row, column] == '\0' ? "^|" : $"{PlayerShootingMap[row, column]}|";
                 }
                 maps.Add(playerMap);
                 maps.Add(shootingMap);
@@ -155,39 +165,41 @@ namespace Stotki
             {"Destroyer2", 2}
         };
         
-        static readonly Player firstPlayerClass = new Player();
-        static readonly Player secondPlayerClass = new Player();
+        static readonly Player FirstPlayerClass = new Player();
+        static readonly Player SecondPlayerClass = new Player();
         
         static void Main(string[] args)
         {
             Console.WriteLine("PLAYER 1 SETTING SHIPS");
             string cheat1 = Console.ReadLine();
-            if (cheat1 == "Enable Cheat Engine")
+            Console.Clear();
+            if (cheat1 == "cheat")
             {
                 CheatShipsGenerator("Player1");
-                firstPlayerClass.ShowMaps();
             }    
             else
             {
                 ShipPlacement("Player1");
             }
             
+            FirstPlayerClass.ShowMaps();
             Console.WriteLine("END TURN");
             Console.ReadLine();
             Console.Clear();
             
             Console.WriteLine("PLAYER 2 SETTING SHIPS");
             string cheat2 = Console.ReadLine();
-            if (cheat2 == "Enable Cheat Engine")
+            Console.Clear();
+            if (cheat2 == "cheat")
             {
                 CheatShipsGenerator("Player2");
-                secondPlayerClass.ShowMaps();
             }
             else
             {
                 ShipPlacement("Player2");
             }
             
+            SecondPlayerClass.ShowMaps();
             Console.WriteLine("END TURN");
             Console.ReadLine();
             Console.Clear();
@@ -198,7 +210,9 @@ namespace Stotki
                 Console.ReadLine();
                 Console.Clear();
                 
+                FirstPlayerClass.ShowMaps();
                 UserShootingInput(out int xShootInput, out int yShootInput);
+                Console.Clear();
                 PlayerShoot(xShootInput,yShootInput,"Player1");
                 
                 Console.WriteLine("END TURN");
@@ -209,14 +223,16 @@ namespace Stotki
                 Console.ReadLine();
                 Console.Clear();
                 
+                SecondPlayerClass.ShowMaps();
                 UserShootingInput(out xShootInput, out yShootInput);
+                Console.Clear();
                 PlayerShoot(xShootInput,yShootInput,"Player2");
                 
                 Console.WriteLine("END TURN");
                 Console.ReadLine();
                 Console.Clear();
                 
-            } while (firstPlayerClass.life == 0 || secondPlayerClass.life == 0);
+            } while (FirstPlayerClass.Life != 0 || SecondPlayerClass.Life != 0);
         }
         
         /// <summary>
@@ -226,19 +242,26 @@ namespace Stotki
         {
             foreach (KeyValuePair<string, int> ship in ShipsValues)
             {
-                Console.Clear();
-                UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value);
                 if (player == "Player1")
                 {
-                   firstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
-                   firstPlayerClass.ShowMaps(); 
+                    FirstPlayerClass.ShowMaps();
                 }
                 else if (player == "Player2")
                 {
-                    secondPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
-                    secondPlayerClass.ShowMaps(); 
+                    SecondPlayerClass.ShowMaps();
+                }
+                UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value);
+                Console.Clear();
+                if (player == "Player1")
+                {
+                    FirstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
+                }
+                else if (player == "Player2")
+                {
+                    SecondPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
                 }
             }
+            
         }
         
         /// <summary>
@@ -247,16 +270,13 @@ namespace Stotki
         /// <returns></returns>
         static void UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, int shipLen)
         {
-            string stringinputBeginCoords = "";
-            string stringinputEndCoords = "";
-            string singlevalidation = "";
-            string lenValid = "";
+            string lenValid;
             int firstCoord = -1;
             int secondCoord = -1;
-            stringinputBeginCoords = "";
-            stringinputEndCoords = "";
             do
             {
+                string stringinputBeginCoords;
+                string singlevalidation;
                 do
                 {
                     Console.WriteLine($"Please enter where your {shipLen} field ship will BEGIN e.g.: (1,3) ");
@@ -271,6 +291,7 @@ namespace Stotki
                     }
                 } while (singlevalidation != "Correct!");
 
+                string stringinputEndCoords;
                 do
                 {
                     Console.WriteLine($"Please enter where your {shipLen} field ship will END e.g.: (1,3) ");
@@ -335,9 +356,9 @@ namespace Stotki
         /// <param name="userInputY"> Y coord</param>
         static void UserShootingInput(out int userInputX, out int userInputY)
         {
-            string validation = "";
-            int firstShootingCoord = 0;
-            int secondShootingCoord = 0;
+            string validation;
+            int firstShootingCoord;
+            int secondShootingCoord;
             do
             {
                 Console.WriteLine("Please enter Shooting Coords separated by ',' e.g.: (1,3) ");
@@ -356,36 +377,39 @@ namespace Stotki
         /// </summary>
         /// <param name="xCoordinate"> X coordinate of shot</param>
         /// <param name="yCoordinate"> Y coordinate of shot</param>
+        /// <param name="player">String showing who is shooting</param>
         /// <returns></returns>
         static void PlayerShoot(int yCoordinate, int xCoordinate, string player)
         {
             if (player == "Player1")
             {
-                secondPlayerClass.playerShipsMap[xCoordinate, yCoordinate] =
-                    secondPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
-                        ? 'X'
-                        : '\0';
-                secondPlayerClass.life -= 1;
-
-                firstPlayerClass.playerShootingMap[xCoordinate, yCoordinate] =
-                    secondPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
+                FirstPlayerClass.PlayerShootingMap[xCoordinate, yCoordinate] =
+                    SecondPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
                         ? 'x'
                         : 'o';
-                firstPlayerClass.ShowMaps(xCoordinate, yCoordinate);
+                
+                SecondPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] =
+                    SecondPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
+                        ? 'X'
+                        : '\0';
+                SecondPlayerClass.Life -= 1;
+
+                FirstPlayerClass.ShowMaps(xCoordinate, yCoordinate);
             }
             else if (player == "Player2")
             {
-                firstPlayerClass.playerShipsMap[xCoordinate, yCoordinate] =
-                    firstPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
-                        ? 'X'
-                        : '\0';
-                firstPlayerClass.life -= 1;
-
-                secondPlayerClass.playerShootingMap[xCoordinate, yCoordinate] =
-                    firstPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
+                SecondPlayerClass.PlayerShootingMap[xCoordinate, yCoordinate] =
+                    FirstPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
                         ? 'x'
                         : 'o';
-                secondPlayerClass.ShowMaps(xCoordinate, yCoordinate);
+                
+                FirstPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] =
+                    FirstPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
+                        ? 'X'
+                        : '\0';
+                FirstPlayerClass.Life -= 1;
+                
+                SecondPlayerClass.ShowMaps(xCoordinate, yCoordinate);
             }
         }
 
@@ -418,7 +442,7 @@ namespace Stotki
         {
             if (player == "Player1")
             {
-                firstPlayerClass.playerShipsMap = new char[,]
+                FirstPlayerClass.PlayerShipsMap = new char[,]
                 {
                     {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
                     {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
@@ -434,7 +458,7 @@ namespace Stotki
             }
             else if (player == "Player2")
             {
-                secondPlayerClass.playerShipsMap = new char[,]
+                SecondPlayerClass.PlayerShipsMap = new char[,]
                 {
                     {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
                     {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
