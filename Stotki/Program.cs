@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 
 namespace Stotki
 {
@@ -55,82 +55,92 @@ namespace Stotki
                 Console.WriteLine($"Placing Ship at {i},{iterationOver} "); // Checking iteration at ship placement
             }
         }
-
+        
+        
         /// <summary>
-        ///     Prints character colored depending on parameters
+        ///     Prints colored Maps in terminal and marks last shot
         /// </summary>
-        /// <param name="character">Character to be printed</param>
-        /// <param name="shot">Information if this was the last shot</param>
-        private void PrintColored(char character, bool shot)
-        {
-            if(character == '#') Console.ForegroundColor = ConsoleColor.Yellow;
-            if(character == 'O' && shot)
-            {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.Black;
-            }
-            if(character == 'O' && !shot) Console.ForegroundColor = ConsoleColor.Blue;
-            if(character == 'X' && shot)
-            {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.Red;
-            }
-            if(character == 'X' && !shot) Console.ForegroundColor = ConsoleColor.Red;
-            
-            Console.Write(character == '\0' ? "   " : $" {character} ");
-            Console.ResetColor();
-        }
-
-        /// <summary>
-        ///     Displays provided map
-        /// </summary>
-        /// <param name="map">Two dimensional representation of a 10x10 map</param>
+        /// <param name="mapString">String representing Maps</param>
         /// <param name="firstCoord">First coord of last shot</param>
         /// <param name="secondCoord">Second coord of last shot</param>
-        private void MapDisplay(char[,] map, int firstCoord, int secondCoord)
+        private void ColorMap(string mapString, int firstCoord, int secondCoord)
         {
-            string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
-            Console.WriteLine();
-            Console.WriteLine("  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |");
-            Console.WriteLine(horizontalLine);
-            for (int row = 0; row < 10; row++)
+            char[] maps = mapString.ToCharArray();
+
+            foreach (char character in maps)
             {
-                Console.Write($"{row} |");
-                for (int column = 0; column < 10; column++)
+                if(character == '#') Console.ForegroundColor = ConsoleColor.Yellow;
+                if(character == 'o') // Shot
                 {
-                    if (row == firstCoord && column == secondCoord)
-                    {
-                        PrintColored(map[row,column], true);
-                    }
-                    else
-                    {
-                        PrintColored(map[row,column], false);
-                    }
-                    
-                    Console.Write("|");
-                    
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Black;
                 }
-                Console.WriteLine();
-                Console.WriteLine(horizontalLine);
+                if(character == 'O') Console.ForegroundColor = ConsoleColor.Blue;
+                if(character == 'x') // Shot
+                {
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                if(character == 'X') Console.ForegroundColor = ConsoleColor.Red;
+            
+                Console.Write(character);
+                Console.ResetColor();
+            }
+
+            if (firstCoord != -1 && secondCoord != -1)
+            {
+                playerShootingMap[firstCoord, secondCoord] = playerShootingMap[firstCoord, secondCoord] == 'o' ? 'O' : 'X';
             }
         }
         
         /// <summary>
-        ///     Display Playing Maps
+        ///     Returns string representing map Display
         /// </summary>
-        public void DisplayShipsMap()
+        /// <returns>String representing Map UI</returns>
+        private string PrepareMapDisplay()
         {
-            MapDisplay(playerShipsMap,-1,-1);
-        }
+            ArrayList maps = new ArrayList();
+            
+            string top = "  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |";
+            string horizontalLine = string.Concat(Enumerable.Repeat("-", 43));
 
+            maps.Add("\n"+string.Concat(Enumerable.Repeat(" ", 20))+"Player"+string.Concat(Enumerable.Repeat(" ", 18)));
+            maps.Add(string.Concat(Enumerable.Repeat(" ", 20))+"Enemy");
+            maps.Add("\n"+top);
+            maps.Add(top);
+            maps.Add("\n"+horizontalLine);
+            maps.Add(horizontalLine);
+            
+            for (int row = 0; row < 10; row++)
+            {
+                string playerMap = $"\n{row} |";
+                string shootingMap = $"{row} |";
+                
+                for (int column = 0; column < 10; column++)
+                {
+                    playerMap += playerShipsMap[row, column] == '\0' ? "   |" : $" {playerShipsMap[row, column]} |";
+                    shootingMap += playerShootingMap[row, column] == '\0' ? "   |" : $" {playerShootingMap[row, column]} |";
+                }
+                maps.Add(playerMap);
+                maps.Add(shootingMap);
+                maps.Add("\n"+horizontalLine);
+                maps.Add(horizontalLine);
+            }
+
+            maps.Add("\n");
+            
+            return String.Join(string.Concat(Enumerable.Repeat(" ", 10)), maps.ToArray());
+        }
+        
         /// <summary>
-        ///     Display Shooting Map
+        ///     Displays maps UI
         /// </summary>
         /// <param name="firstCoord">First coord of last shot</param>
         /// <param name="secondCoord">Second coord of last shot</param>
-        public void DisplayShootingMap(int firstCoord=-1, int secondCoord=-1)
+        public void ShowMaps(int firstCoord=-1, int secondCoord=-1)
         {
-            MapDisplay(playerShootingMap, firstCoord, secondCoord);
+            string maps = PrepareMapDisplay();
+            ColorMap(maps, firstCoord, secondCoord);
         }
     }
 
@@ -138,10 +148,10 @@ namespace Stotki
     {
         private static readonly IDictionary<string, int> ShipsValues = new Dictionary<string, int>() {
             {"Carrier", 5},
-            {"Battleship", 4},
+            /*{"Battleship", 4},
             {"Submarine1", 3},
             {"Submarine2", 3},
-            {"Destroyer1", 2},
+            {"Destroyer1", 2},*/
             {"Destroyer2", 2}
         };
         
@@ -149,16 +159,22 @@ namespace Stotki
         {
             PlayerMaps firstPlayerClass = new PlayerMaps();
             PlayerMaps secondPlayerClass = new PlayerMaps();
-            
-            UserShootingInput(out int xShootingCoord, out int yShootingCoord);
-            PlayerShoot(xShootingCoord, yShootingCoord, firstPlayerClass.playerShootingMap, secondPlayerClass.playerShipsMap);
-            firstPlayerClass.DisplayShootingMap();
 
+            firstPlayerClass.ShowMaps();
             foreach (KeyValuePair<string, int> ship in ShipsValues)
             {
                 UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value);
+                Console.Clear();
                 firstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
-                firstPlayerClass.DisplayShipsMap();
+                firstPlayerClass.ShowMaps();
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                UserShootingInput(out int xShootingCoord, out int yShootingCoord);
+                Console.Clear();
+                PlayerShoot(xShootingCoord, yShootingCoord, firstPlayerClass.playerShootingMap, secondPlayerClass.playerShipsMap);
+                firstPlayerClass.ShowMaps(xShootingCoord, yShootingCoord);
             }
         }
         
@@ -258,7 +274,7 @@ namespace Stotki
                 ? 'X' : '\0' ;
             
             player1ShootingMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
-                ? 'X' : 'O' ;
+                ? 'x' : 'o' ;
         }
 
         /// <summary>
