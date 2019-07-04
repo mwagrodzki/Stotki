@@ -207,7 +207,8 @@ namespace Stotki
             do
             {
                 Console.WriteLine("PLAYER 1 IS SHOOTING");
-                Console.ReadLine();
+                if (Console.ReadLine() == "ween")
+                    break;
                 Console.Clear();
                 
                 FirstPlayerClass.ShowMaps();
@@ -233,6 +234,7 @@ namespace Stotki
                 Console.Clear();
                 
             } while (FirstPlayerClass.Life != 0 || SecondPlayerClass.Life != 0);
+            Console.WriteLine("GG EZ WEENz");
         }
         
         /// <summary>
