@@ -171,44 +171,57 @@ namespace Stotki
             string stringinputBeginCoords = "";
             string stringinputEndCoords = "";
             string singlevalidation = "";
+            string lenValid = "";
             int firstCoord = -1;
             int secondCoord = -1;
             stringinputBeginCoords = "";
             stringinputEndCoords = "";
             do
             {
-                Console.WriteLine($"Please enter where your {shipLen} field ship will BEGIN e.g.: (1,3) ");
-                stringinputBeginCoords = Console.ReadLine();
-                singlevalidation = UserCoordsPairValidation(stringinputBeginCoords, out firstCoord, out secondCoord);
+                do
+                {
+                    Console.WriteLine($"Please enter where your {shipLen} field ship will BEGIN e.g.: (1,3) ");
+                    stringinputBeginCoords = Console.ReadLine();
+                    singlevalidation =
+                        UserCoordsPairValidation(stringinputBeginCoords, out firstCoord, out secondCoord);
+
+                    if (singlevalidation == "Wrong!")
+                    {
+                        Console.WriteLine(
+                            "Wrong Input, please make sure ship beginning coordinates are correct :v");
+                    }
+                } while (singlevalidation != "Correct!");
+
+                do
+                {
+                    Console.WriteLine($"Please enter where your {shipLen} field ship will END e.g.: (1,3) ");
+                    stringinputEndCoords = Console.ReadLine();
+                    singlevalidation = UserCoordsPairValidation(stringinputEndCoords, out firstCoord, out secondCoord);
+
+                    if (singlevalidation == "Wrong!")
+                    {
+                        Console.WriteLine(
+                            "Wrong Input, please make sure ship end coordinates are correct :v");
+                    }
+                } while (singlevalidation != "Correct!");
+
+                lenValid = UserShipPlacementValidation(stringinputBeginCoords + "/" + stringinputEndCoords,
+                    out firstCoords, out secondCoords, shipLen);
                 
-                if (singlevalidation == "Wrong!")
+                if (lenValid == "Wrong Len!")
                 {
                     Console.WriteLine(
-                        "Wrong Input, please make sure ship beginning coordinates are correct :v");
+                        $"Wrong Ship Length, you need to make ({shipLen}) :v");
                 }
-            } while (singlevalidation == "Wrong!");
-
-            do
-            {
-                Console.WriteLine($"Please enter where your {shipLen} field ship will END e.g.: (1,3) ");
-                stringinputEndCoords = Console.ReadLine();
-                singlevalidation = UserCoordsPairValidation(stringinputEndCoords, out firstCoord, out secondCoord);
                 
-                if (singlevalidation == "Wrong!")
-                {
-                    Console.WriteLine(
-                        "Wrong Input, please make sure ship end coordinates are correct :v");
-                }
-            } while (singlevalidation == "Wrong!");
-
-            UserShipPlacementValidation(stringinputBeginCoords+"/"+stringinputEndCoords, out firstCoords, out secondCoords);
+            } while (lenValid != "Correct!");
         }
         
         /// <summary>
         ///     Validation to user input when placing ships
         /// </summary>
         /// <returns></returns>
-        static string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords)
+        static string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords, int shipLen)
         {
             string[] splitUserShipInput = userShipInput.Split("/");
             string[] beginCommaCoords = splitUserShipInput[0].Split(",");
@@ -218,6 +231,21 @@ namespace Stotki
             
             firstCoords = Array.ConvertAll(beginCommaCoords, int.Parse);
             secondCoords = Array.ConvertAll(endCommaCoords, int.Parse);
+            
+            if (firstCoords[0] == secondCoords[0])
+            {
+                if (Math.Abs(firstCoords[1] - secondCoords[1]) != shipLen)
+                {
+                    return "Wrong Len!";
+                }
+            }
+            else if (firstCoords[1] == secondCoords[1])
+            {
+                if (Math.Abs(firstCoords[0] - secondCoords[0]) != shipLen)
+                {
+                    return "Wrong Len!";
+                }
+            }
             return "Correct!";
         }
 
