@@ -152,24 +152,42 @@ namespace Stotki
         static void Main(string[] args)
         {
             Console.WriteLine("PLAYER 1 SETTING SHIPS");
-            Console.ReadLine();
-            ShipPlacement("Player1");
+            string cheat1 = Console.ReadLine();
+            if (cheat1 == "Enable Cheat Engine")
+            {
+                CheatShipsGenerator("Player1");
+                firstPlayerClass.DisplayShipsMap();
+            }    
+            else
+            {
+                ShipPlacement("Player1");
+            }
             
             Console.WriteLine("PLAYER 2 SETTING SHIPS");
-            Console.ReadLine();
-            ShipPlacement("Player2");
+            string cheat2 = Console.ReadLine();
+            if (cheat2 == "Enable Cheat Engine")
+            {
+                CheatShipsGenerator("Player2");
+                secondPlayerClass.DisplayShipsMap();
+            }
+            else
+            {
+                ShipPlacement("Player2");
+            }
 
             do
             {
                 Console.WriteLine("PLAYER 1 IS SHOOTING");
                 Console.ReadLine();
                 
+                firstPlayerClass.DisplayShootingMap();
                 UserShootingInput(out int xShootInput, out int yShootInput);
                 PlayerShoot(xShootInput,yShootInput,"Player1");
                 
                 Console.WriteLine("PLAYER 2 IS SHOOTING");
                 Console.ReadLine();
                 
+                secondPlayerClass.DisplayShootingMap();
                 UserShootingInput(out xShootInput, out yShootInput);
                 PlayerShoot(xShootInput,yShootInput,"Player2");
                 
@@ -368,6 +386,42 @@ namespace Stotki
                 return "Wrong!";
             
             return "Correct!";
+        }
+
+        static void CheatShipsGenerator(string player)
+        {
+            if (player == "Player1")
+            {
+                firstPlayerClass.playerShipsMap = new char[,]
+                {
+                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
+                };
+            }
+            else if (player == "Player2")
+            {
+                secondPlayerClass.playerShipsMap = new char[,]
+                {
+                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
+                };
+            }
         }
     }
 }
