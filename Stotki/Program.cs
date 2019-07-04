@@ -250,8 +250,7 @@ namespace Stotki
                 {
                     SecondPlayerClass.ShowMaps();
                 }
-                UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value);
-                Console.Clear();
+                UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value, player);Console.Clear();
                 if (player == "Player1")
                 {
                     FirstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
@@ -261,14 +260,13 @@ namespace Stotki
                     SecondPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
                 }
             }
-            
         }
         
         /// <summary>
         ///     Input for ship placement
         /// </summary>
         /// <returns></returns>
-        static void UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, int shipLen)
+        static void UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, int shipLen, string player)
         {
             string lenValid;
             int firstCoord = -1;
@@ -306,12 +304,17 @@ namespace Stotki
                 } while (singlevalidation != "Correct!");
 
                 lenValid = UserShipPlacementValidation(stringinputBeginCoords + "/" + stringinputEndCoords,
-                    out firstCoords, out secondCoords, shipLen);
+                    out firstCoords, out secondCoords, shipLen, player);
                 
                 if (lenValid == "Wrong Len!")
                 {
                     Console.WriteLine(
                         $"Wrong Ship Length, you need to make ({shipLen}) :v");
+                }
+
+                if (lenValid == "Ship Nearby!")
+                {
+                    Console.WriteLine("You have already placed ship nearby :v");
                 }
                 
             } while (lenValid != "Correct!");
@@ -321,29 +324,109 @@ namespace Stotki
         ///     Validation to user input when placing ships
         /// </summary>
         /// <returns></returns>
-        static string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords, int shipLen)
+        static string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords, int shipLen, string player)
         {
             string[] splitUserShipInput = userShipInput.Split("/");
             string[] beginCommaCoords = splitUserShipInput[0].Split(",");
             string[] endCommaCoords = splitUserShipInput[1].Split(",");
-            
-            // NEED TO MAKE VALIDATION HERE OF PLACED SHIPS
-            
+
             firstCoords = Array.ConvertAll(beginCommaCoords, int.Parse);
             secondCoords = Array.ConvertAll(endCommaCoords, int.Parse);
-            
+
             if (firstCoords[0] == secondCoords[0])
             {
-                if (Math.Abs(firstCoords[1] - secondCoords[1]) != shipLen)
-                {
-                    return "Wrong Len!";
-                }
+                string valid = PlacingValidationIterationY(firstCoords, secondCoords, player, shipLen);
+                if (valid != "Correct!")
+                    return valid;
             }
             else if (firstCoords[1] == secondCoords[1])
             {
-                if (Math.Abs(firstCoords[0] - secondCoords[0]) != shipLen)
+                string valid = PlacingValidationIterationX(firstCoords, secondCoords, player, shipLen);
+                if (valid != "Correct!")
+                    return valid;
+            }
+            return "Correct!";
+        }
+
+        static string PlacingValidationIterationX(int[] firstCoords, int[] secondCoords, string player, int shipLen)
+        {
+            if (Math.Abs(firstCoords[0] - secondCoords[0]) != shipLen-1)
+            {
+                return "Wrong Len!";
+            }
+                
+            if (player == "Player1")
+            {
+                for (int i = firstCoords[0]; i < secondCoords[0]; i++)
                 {
-                    return "Wrong Len!";
+                    try
+                    {
+                        if (FirstPlayerClass.PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
+                            FirstPlayerClass.PlayerShipsMap[firstCoords[1] - 1, i] == '#')
+                            return "Ship Nearby!";
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        int dupa = 0;
+                    }
+                }
+            }
+            else if (player == "Player2")
+            {
+                for (int i = firstCoords[0]; i < secondCoords[0]; i++)
+                {
+                    try
+                    {
+                        if (SecondPlayerClass.PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
+                            SecondPlayerClass.PlayerShipsMap[firstCoords[1] - 1, i] == '#')
+                            return "Ship Nearby!";
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        int dupa = 0;
+                    }
+                }
+            }
+            return "Correct!";
+        }
+
+        static string PlacingValidationIterationY(int[] firstCoords, int[] secondCoords, string player, int shipLen)
+        {
+            if (Math.Abs(firstCoords[1] - secondCoords[1]) != shipLen-1)
+            {
+                return "Wrong Len!";
+            }
+                
+            if (player == "Player1")
+            {
+                for (int i = firstCoords[1]; i < secondCoords[1]; i++)
+                {
+                    try
+                    {
+                        if (FirstPlayerClass.PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
+                            FirstPlayerClass.PlayerShipsMap[i, firstCoords[0] - 1] == '#')
+                            return "Ship Nearby!";
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        int dupa = 0;
+                    }
+                }
+            }
+            else if (player == "Player2")
+            {
+                for (int i = firstCoords[1]; i < secondCoords[1]; i++)
+                {
+                    try
+                    {
+                        if (SecondPlayerClass.PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
+                            SecondPlayerClass.PlayerShipsMap[i, firstCoords[0] - 1] == '#')
+                            return "Ship Nearby!";
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        int dupa = 0;
+                    }
                 }
             }
             return "Correct!";
