@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Stotki
 {
@@ -359,34 +360,36 @@ namespace Stotki
                 
             if (player == "Player1")
             {
-                for (int i = firstCoords[0]; i < secondCoords[0]; i++)
+                string valid2 = PlacingValidationDeepIterationX(firstCoords, secondCoords, FirstPlayerClass);
+                if (valid2!="Correct!")
                 {
-                    try
-                    {
-                        if (FirstPlayerClass.PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
-                            FirstPlayerClass.PlayerShipsMap[firstCoords[1] - 1, i] == '#')
-                            return "Ship Nearby!";
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        int dupa = 0;
-                    }
+                    return valid2;
                 }
             }
             else if (player == "Player2")
             {
-                for (int i = firstCoords[0]; i < secondCoords[0]; i++)
+                string valid2 = PlacingValidationDeepIterationX(firstCoords, secondCoords, SecondPlayerClass);
+                if (valid2 != "Correct!")
                 {
-                    try
-                    {
-                        if (SecondPlayerClass.PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
-                            SecondPlayerClass.PlayerShipsMap[firstCoords[1] - 1, i] == '#')
-                            return "Ship Nearby!";
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        int dupa = 0;
-                    }
+                    return valid2;
+                }
+            }
+            return "Correct!";
+        }
+
+        static string PlacingValidationDeepIterationX(int[] firstCoords, int[] secondCoords, Player player)
+        {
+            for (int i = firstCoords[0]; i < secondCoords[0]; i++)
+            {
+                try
+                {
+                    if (player.PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
+                        player.PlayerShipsMap[firstCoords[1] - 1, i] == '#')
+                        return "Ship Nearby!";
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    int dupa = 0;
                 }
             }
             return "Correct!";
@@ -401,34 +404,36 @@ namespace Stotki
                 
             if (player == "Player1")
             {
-                for (int i = firstCoords[1]; i < secondCoords[1]; i++)
+                string valid2 = PlacingValidationDeepIterationY(firstCoords, secondCoords, FirstPlayerClass);
+                if (valid2!="Correct!")
                 {
-                    try
-                    {
-                        if (FirstPlayerClass.PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
-                            FirstPlayerClass.PlayerShipsMap[i, firstCoords[0] - 1] == '#')
-                            return "Ship Nearby!";
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        int dupa = 0;
-                    }
+                    return valid2;
                 }
             }
             else if (player == "Player2")
             {
-                for (int i = firstCoords[1]; i < secondCoords[1]; i++)
+                string valid2 = PlacingValidationDeepIterationY(firstCoords, secondCoords, SecondPlayerClass);
+                if (valid2!="Correct!")
                 {
-                    try
-                    {
-                        if (SecondPlayerClass.PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
-                            SecondPlayerClass.PlayerShipsMap[i, firstCoords[0] - 1] == '#')
-                            return "Ship Nearby!";
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        int dupa = 0;
-                    }
+                    return valid2;
+                }
+            }
+            return "Correct!";
+        }
+
+        static string PlacingValidationDeepIterationY(int[] firstCoords, int[] secondCoords, Player player)
+        {
+            for (int i = firstCoords[1]; i < secondCoords[1]; i++)
+            {
+                try
+                {
+                    if (player.PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
+                        player.PlayerShipsMap[i, firstCoords[0] - 1] == '#')
+                        return "Ship Nearby!";
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    int dupa = 0;
                 }
             }
             return "Correct!";
