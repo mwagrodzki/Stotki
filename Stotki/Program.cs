@@ -56,7 +56,134 @@ namespace Stotki
                     PlayerShipsMap[iterationOver, i] = '#';
             }
         }
+        
+         /// <summary>
+        ///     Validation to user input when placing ships
+        /// </summary>
+        /// <returns></returns>
+        public string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords, int shipLen)
+        {
+            string[] splitUserShipInput = userShipInput.Split("/");
+            string[] beginCommaCoords = splitUserShipInput[0].Split(",");
+            string[] endCommaCoords = splitUserShipInput[1].Split(",");
 
+            firstCoords = Array.ConvertAll(beginCommaCoords, int.Parse);
+            secondCoords = Array.ConvertAll(endCommaCoords, int.Parse);
+
+            if (firstCoords[0] == secondCoords[0])
+            {
+                string valid = PlacingValidationIterationY(firstCoords, secondCoords, shipLen);
+                if (valid != "Correct!")
+                    return valid;
+            }
+            else if (firstCoords[1] == secondCoords[1])
+            {
+                string valid = PlacingValidationIterationX(firstCoords, secondCoords, shipLen);
+                if (valid != "Correct!")
+                    return valid;
+            }
+            return "Correct!";
+        }
+
+        private string PlacingValidationIterationX(int[] firstCoords, int[] secondCoords, int shipLen)
+        {
+            if (Math.Abs(firstCoords[0] - secondCoords[0]) != shipLen-1)
+            {
+                return "Wrong Len!";
+            }
+                
+            string valid2 = PlacingValidationDeepIterationX(firstCoords, secondCoords);
+            return valid2!="Correct!" ? valid2 : "Correct!";
+        }
+
+        private string PlacingValidationDeepIterationX(int[] firstCoords, int[] secondCoords)
+        {
+            for (int i = firstCoords[0]; i < secondCoords[0]; i++)
+            {
+                try
+                {
+                    if (PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
+                        PlayerShipsMap[firstCoords[1] - 1, i] == '#')
+                        return "Ship Nearby!";
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    int dupa = 0;
+                }
+            }
+            return "Correct!";
+        }
+
+        private string PlacingValidationIterationY(int[] firstCoords, int[] secondCoords, int shipLen)
+        {
+            if (Math.Abs(firstCoords[1] - secondCoords[1]) != shipLen-1)
+            {
+                return "Wrong Len!";
+            }
+            
+            string valid2 = PlacingValidationDeepIterationY(firstCoords, secondCoords);
+            return valid2!="Correct!" ? valid2 : "Correct!";
+        }
+
+        private string PlacingValidationDeepIterationY(int[] firstCoords, int[] secondCoords)
+        {
+            for (int i = firstCoords[1]; i < secondCoords[1]; i++)
+            {
+                try
+                {
+                    if (PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
+                        PlayerShipsMap[i, firstCoords[0] - 1] == '#')
+                        return "Ship Nearby!";
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    int dupa = 0;
+                }
+            }
+            return "Correct!";
+        }
+
+        public void CheatShipsGenerator()
+        {
+            PlayerShipsMap = new char[,]
+                {
+                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
+                };
+        }
+        
+        /// <summary>
+        ///     Saves player shot from given coordinates
+        /// </summary>
+        /// <param name="xCoordinate"> X coordinate of shot</param>
+        /// <param name="yCoordinate"> Y coordinate of shot</param>
+        /// <param name="player">String showing who is shooting</param>
+        /// <returns></returns>
+        public void PlayerShoot(int yCoordinate, int xCoordinate, Player enemy)
+        {
+            PlayerShootingMap[xCoordinate, yCoordinate] =
+                enemy.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
+                    ? 'x'
+                    : 'o';
+            
+            enemy.PlayerShipsMap[xCoordinate, yCoordinate] =
+                enemy.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
+                    ? 'X'
+                    : '\0';
+            enemy.Life -= 1;
+
+            ShowMaps(xCoordinate, yCoordinate);
+        
+        }
+        
         /// <summary>
         ///     Prints colored Maps in terminal and marks last shot
         /// </summary>
@@ -157,14 +284,7 @@ namespace Stotki
 
     public class BattleShipsGame
     {
-        private static readonly IDictionary<string, int> ShipsValues = new Dictionary<string, int>() {
-            {"Carrier", 5},
-            {"Battleship", 4},
-            {"Submarine1", 3},
-            {"Submarine2", 3},
-            {"Destroyer1", 2},
-            {"Destroyer2", 2}
-        };
+        
         
         static readonly Player FirstPlayerClass = new Player();
         static readonly Player SecondPlayerClass = new Player();
@@ -176,11 +296,11 @@ namespace Stotki
             Console.Clear();
             if (cheat1 == "cheat")
             {
-                CheatShipsGenerator("Player1");
+                FirstPlayerClass.CheatShipsGenerator();
             }    
             else
             {
-                ShipPlacement("Player1");
+                ShipPlacement(FirstPlayerClass);
             }
             
             FirstPlayerClass.ShowMaps();
@@ -193,11 +313,11 @@ namespace Stotki
             Console.Clear();
             if (cheat2 == "cheat")
             {
-                CheatShipsGenerator("Player2");
+                SecondPlayerClass.CheatShipsGenerator();
             }
             else
             {
-                ShipPlacement("Player2");
+                ShipPlacement(SecondPlayerClass);
             }
             
             SecondPlayerClass.ShowMaps();
@@ -215,7 +335,7 @@ namespace Stotki
                 FirstPlayerClass.ShowMaps();
                 UserShootingInput(out int xShootInput, out int yShootInput);
                 Console.Clear();
-                PlayerShoot(xShootInput,yShootInput,"Player1");
+                FirstPlayerClass.PlayerShoot(xShootInput,yShootInput,SecondPlayerClass);
                 
                 Console.WriteLine("END TURN");
                 Console.ReadLine();
@@ -228,7 +348,7 @@ namespace Stotki
                 SecondPlayerClass.ShowMaps();
                 UserShootingInput(out xShootInput, out yShootInput);
                 Console.Clear();
-                PlayerShoot(xShootInput,yShootInput,"Player2");
+                SecondPlayerClass.PlayerShoot(xShootInput,yShootInput, FirstPlayerClass);
                 
                 Console.WriteLine("END TURN");
                 Console.ReadLine();
@@ -241,27 +361,22 @@ namespace Stotki
         /// <summary>
         ///     Universal method for calling methods responsible for placing ships as and argument takes player
         /// </summary>
-        static void ShipPlacement(string player)
+        static void ShipPlacement(Player player)
         {
-            foreach (KeyValuePair<string, int> ship in ShipsValues)
-            {
-                if (player == "Player1")
-                {
-                    FirstPlayerClass.ShowMaps();
-                }
-                else if (player == "Player2")
-                {
-                    SecondPlayerClass.ShowMaps();
-                }
+            IDictionary<string, int> shipsValues = new Dictionary<string, int>() {
+                {"Carrier", 5},
+                {"Battleship", 4},
+                {"Submarine1", 3},
+                {"Submarine2", 3},
+                {"Destroyer1", 2},
+                {"Destroyer2", 2}
+            };
+            
+            foreach (KeyValuePair<string, int> ship in shipsValues)
+            { 
+                player.ShowMaps();
                 UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value, player);Console.Clear();
-                if (player == "Player1")
-                {
-                    FirstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
-                }
-                else if (player == "Player2")
-                {
-                    SecondPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
-                }
+                player.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
             }
         }
         
@@ -269,11 +384,11 @@ namespace Stotki
         ///     Input for ship placement
         /// </summary>
         /// <returns></returns>
-        static void UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, int shipLen, string player)
+        static void UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, int shipLen, Player player)
         {
             string lenValid;
-            int firstCoord = -1;
-            int secondCoord = -1;
+            int firstCoord;
+            int secondCoord;
             do
             {
                 string stringinputBeginCoords;
@@ -306,8 +421,8 @@ namespace Stotki
                     }
                 } while (singlevalidation != "Correct!");
 
-                lenValid = UserShipPlacementValidation(stringinputBeginCoords + "/" + stringinputEndCoords,
-                    out firstCoords, out secondCoords, shipLen, player);
+                lenValid = player.UserShipPlacementValidation(stringinputBeginCoords + "/" + stringinputEndCoords,
+                    out firstCoords, out secondCoords, shipLen);
                 
                 if (lenValid == "Wrong Len!")
                 {
@@ -323,121 +438,7 @@ namespace Stotki
             } while (lenValid != "Correct!");
         }
         
-        /// <summary>
-        ///     Validation to user input when placing ships
-        /// </summary>
-        /// <returns></returns>
-        static string UserShipPlacementValidation(string userShipInput, out int[] firstCoords, out int[] secondCoords, int shipLen, string player)
-        {
-            string[] splitUserShipInput = userShipInput.Split("/");
-            string[] beginCommaCoords = splitUserShipInput[0].Split(",");
-            string[] endCommaCoords = splitUserShipInput[1].Split(",");
-
-            firstCoords = Array.ConvertAll(beginCommaCoords, int.Parse);
-            secondCoords = Array.ConvertAll(endCommaCoords, int.Parse);
-
-            if (firstCoords[0] == secondCoords[0])
-            {
-                string valid = PlacingValidationIterationY(firstCoords, secondCoords, player, shipLen);
-                if (valid != "Correct!")
-                    return valid;
-            }
-            else if (firstCoords[1] == secondCoords[1])
-            {
-                string valid = PlacingValidationIterationX(firstCoords, secondCoords, player, shipLen);
-                if (valid != "Correct!")
-                    return valid;
-            }
-            return "Correct!";
-        }
-
-        static string PlacingValidationIterationX(int[] firstCoords, int[] secondCoords, string player, int shipLen)
-        {
-            if (Math.Abs(firstCoords[0] - secondCoords[0]) != shipLen-1)
-            {
-                return "Wrong Len!";
-            }
-                
-            if (player == "Player1")
-            {
-                string valid2 = PlacingValidationDeepIterationX(firstCoords, secondCoords, FirstPlayerClass);
-                if (valid2!="Correct!")
-                {
-                    return valid2;
-                }
-            }
-            else if (player == "Player2")
-            {
-                string valid2 = PlacingValidationDeepIterationX(firstCoords, secondCoords, SecondPlayerClass);
-                if (valid2 != "Correct!")
-                {
-                    return valid2;
-                }
-            }
-            return "Correct!";
-        }
-
-        static string PlacingValidationDeepIterationX(int[] firstCoords, int[] secondCoords, Player player)
-        {
-            for (int i = firstCoords[0]; i < secondCoords[0]; i++)
-            {
-                try
-                {
-                    if (player.PlayerShipsMap[firstCoords[1] + 1, i] == '#' ||
-                        player.PlayerShipsMap[firstCoords[1] - 1, i] == '#')
-                        return "Ship Nearby!";
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    int dupa = 0;
-                }
-            }
-            return "Correct!";
-        }
-
-        static string PlacingValidationIterationY(int[] firstCoords, int[] secondCoords, string player, int shipLen)
-        {
-            if (Math.Abs(firstCoords[1] - secondCoords[1]) != shipLen-1)
-            {
-                return "Wrong Len!";
-            }
-                
-            if (player == "Player1")
-            {
-                string valid2 = PlacingValidationDeepIterationY(firstCoords, secondCoords, FirstPlayerClass);
-                if (valid2!="Correct!")
-                {
-                    return valid2;
-                }
-            }
-            else if (player == "Player2")
-            {
-                string valid2 = PlacingValidationDeepIterationY(firstCoords, secondCoords, SecondPlayerClass);
-                if (valid2!="Correct!")
-                {
-                    return valid2;
-                }
-            }
-            return "Correct!";
-        }
-
-        static string PlacingValidationDeepIterationY(int[] firstCoords, int[] secondCoords, Player player)
-        {
-            for (int i = firstCoords[1]; i < secondCoords[1]; i++)
-            {
-                try
-                {
-                    if (player.PlayerShipsMap[i, firstCoords[0] + 1] == '#' ||
-                        player.PlayerShipsMap[i, firstCoords[0] - 1] == '#')
-                        return "Ship Nearby!";
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    int dupa = 0;
-                }
-            }
-            return "Correct!";
-        }
+       
 
         /// <summary>
         ///     Method responsible for getting user input for shooting
@@ -462,46 +463,7 @@ namespace Stotki
             userInputY = secondShootingCoord;
         }
 
-        /// <summary>
-        ///     Saves player shot from given coordinates
-        /// </summary>
-        /// <param name="xCoordinate"> X coordinate of shot</param>
-        /// <param name="yCoordinate"> Y coordinate of shot</param>
-        /// <param name="player">String showing who is shooting</param>
-        /// <returns></returns>
-        static void PlayerShoot(int yCoordinate, int xCoordinate, string player)
-        {
-            if (player == "Player1")
-            {
-                FirstPlayerClass.PlayerShootingMap[xCoordinate, yCoordinate] =
-                    SecondPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
-                        ? 'x'
-                        : 'o';
-                
-                SecondPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] =
-                    SecondPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
-                        ? 'X'
-                        : '\0';
-                SecondPlayerClass.Life -= 1;
-
-                FirstPlayerClass.ShowMaps(xCoordinate, yCoordinate);
-            }
-            else if (player == "Player2")
-            {
-                SecondPlayerClass.PlayerShootingMap[xCoordinate, yCoordinate] =
-                    FirstPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
-                        ? 'x'
-                        : 'o';
-                
-                FirstPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] =
-                    FirstPlayerClass.PlayerShipsMap[xCoordinate, yCoordinate] == '#'
-                        ? 'X'
-                        : '\0';
-                FirstPlayerClass.Life -= 1;
-                
-                SecondPlayerClass.ShowMaps(xCoordinate, yCoordinate);
-            }
-        }
+        
 
         /// <summary>
         ///     Validating of the given user input
@@ -528,40 +490,6 @@ namespace Stotki
             return "Correct!";
         }
 
-        static void CheatShipsGenerator(string player)
-        {
-            if (player == "Player1")
-            {
-                FirstPlayerClass.PlayerShipsMap = new char[,]
-                {
-                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
-                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
-                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
-                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
-                };
-            }
-            else if (player == "Player2")
-            {
-                SecondPlayerClass.PlayerShipsMap = new char[,]
-                {
-                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
-                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
-                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
-                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
-                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
-                };
-            }
-        }
+        
     }
 }
