@@ -5,8 +5,9 @@ using System.Runtime.ExceptionServices;
 
 namespace Stotki
 {
-    public class PlayerMaps
+    public class Player
     {
+        public int life = 19;
         public char[,] playerShipsMap = new char[10,10]; // Array that represents map 10*10
         public char[,] playerShootingMap = new char[10,10];
         
@@ -145,20 +146,54 @@ namespace Stotki
             {"Destroyer2", 2}
         };
         
+        static readonly Player firstPlayerClass = new Player();
+        static readonly Player secondPlayerClass = new Player();
+        
         static void Main(string[] args)
         {
-            PlayerMaps firstPlayerClass = new PlayerMaps();
-            PlayerMaps secondPlayerClass = new PlayerMaps();
+            Console.WriteLine("PLAYER 1 SETTING SHIPS");
+            Console.ReadLine();
+            ShipPlacement("Player1");
             
-            UserShootingInput(out int xShootingCoord, out int yShootingCoord);
-            PlayerShoot(xShootingCoord, yShootingCoord, firstPlayerClass.playerShootingMap, secondPlayerClass.playerShipsMap);
-            firstPlayerClass.DisplayShootingMap();
+            Console.WriteLine("PLAYER 2 SETTING SHIPS");
+            Console.ReadLine();
+            ShipPlacement("Player2");
 
+            do
+            {
+                Console.WriteLine("PLAYER 1 IS SHOOTING");
+                Console.ReadLine();
+                
+                UserShootingInput(out int xShootInput, out int yShootInput);
+                PlayerShoot(xShootInput,yShootInput,"Player1");
+                
+                Console.WriteLine("PLAYER 2 IS SHOOTING");
+                Console.ReadLine();
+                
+                UserShootingInput(out xShootInput, out yShootInput);
+                PlayerShoot(xShootInput,yShootInput,"Player2");
+                
+            } while (firstPlayerClass.life == 0 || secondPlayerClass.life == 0);
+        }
+        
+        /// <summary>
+        ///     Universal method for calling methods responsible for placing ships as and argument takes player
+        /// </summary>
+        static void ShipPlacement(string player)
+        {
             foreach (KeyValuePair<string, int> ship in ShipsValues)
             {
                 UserShipPlacementTurn(out int[] firstCoords, out int[] secondCoords, ship.Value);
-                firstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
-                firstPlayerClass.DisplayShipsMap();
+                if (player == "Player1")
+                {
+                   firstPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
+                   firstPlayerClass.DisplayShipsMap(); 
+                }
+                else if (player == "Player2")
+                {
+                    secondPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
+                    secondPlayerClass.DisplayShipsMap(); 
+                }
             }
         }
         
@@ -277,16 +312,37 @@ namespace Stotki
         /// </summary>
         /// <param name="xCoordinate"> X coordinate of shot</param>
         /// <param name="yCoordinate"> Y coordinate of shot</param>
-        /// <param name="player1ShootingMap"></param>
-        /// <param name="player2ShipsMap"></param>
         /// <returns></returns>
-        static void PlayerShoot(int yCoordinate, int xCoordinate, char[,] player1ShootingMap, char[,] player2ShipsMap)
+        static void PlayerShoot(int yCoordinate, int xCoordinate, string player)
         {
-            player2ShipsMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
-                ? 'X' : '\0' ;
-            
-            player1ShootingMap[xCoordinate, yCoordinate] = player2ShipsMap[xCoordinate, yCoordinate] == '#'
-                ? 'X' : 'O' ;
+            if (player == "Player1")
+            {
+                secondPlayerClass.playerShipsMap[xCoordinate, yCoordinate] =
+                    secondPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
+                        ? 'X'
+                        : '\0';
+                secondPlayerClass.life -= 1;
+
+                firstPlayerClass.playerShootingMap[xCoordinate, yCoordinate] =
+                    secondPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
+                        ? 'X'
+                        : 'O';
+                firstPlayerClass.DisplayShootingMap();
+            }
+            else if (player == "Player2")
+            {
+                firstPlayerClass.playerShipsMap[xCoordinate, yCoordinate] =
+                    firstPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
+                        ? 'X'
+                        : '\0';
+                firstPlayerClass.life -= 1;
+
+                secondPlayerClass.playerShootingMap[xCoordinate, yCoordinate] =
+                    firstPlayerClass.playerShipsMap[xCoordinate, yCoordinate] == '#'
+                        ? 'X'
+                        : 'O';
+                secondPlayerClass.DisplayShootingMap();
+            }
         }
 
         /// <summary>
