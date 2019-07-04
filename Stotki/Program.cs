@@ -56,8 +56,7 @@ namespace Stotki
                 Console.WriteLine($"Placing Ship at {i},{iterationOver} "); // Checking iteration at ship placement
             }
         }
-        
-        
+
         /// <summary>
         ///     Prints colored Maps in terminal and marks last shot
         /// </summary>
@@ -148,12 +147,12 @@ namespace Stotki
     public class BattleShipsGame
     {
         private static readonly IDictionary<string, int> ShipsValues = new Dictionary<string, int>() {
-            {"Carrier", 5}/*,
+            {"Carrier", 5},
             {"Battleship", 4},
             {"Submarine1", 3},
             {"Submarine2", 3},
             {"Destroyer1", 2},
-            {"Destroyer2", 2}*/
+            {"Destroyer2", 2}
         };
         
         static readonly Player firstPlayerClass = new Player();
@@ -161,17 +160,34 @@ namespace Stotki
         
         static void Main(string[] args)
         {
-
             Console.WriteLine("PLAYER 1 SETTING SHIPS");
-            Console.ReadLine();
-            ShipPlacement("Player1");
+            string cheat1 = Console.ReadLine();
+            if (cheat1 == "Enable Cheat Engine")
+            {
+                CheatShipsGenerator("Player1");
+                firstPlayerClass.ShowMaps();
+            }    
+            else
+            {
+                ShipPlacement("Player1");
+            }
+            
             Console.WriteLine("END TURN");
             Console.ReadLine();
             Console.Clear();
             
             Console.WriteLine("PLAYER 2 SETTING SHIPS");
-            Console.ReadLine();
-            ShipPlacement("Player2");
+            string cheat2 = Console.ReadLine();
+            if (cheat2 == "Enable Cheat Engine")
+            {
+                CheatShipsGenerator("Player2");
+                secondPlayerClass.ShowMaps();
+            }
+            else
+            {
+                ShipPlacement("Player2");
+            }
+            
             Console.WriteLine("END TURN");
             Console.ReadLine();
             Console.Clear();
@@ -222,7 +238,6 @@ namespace Stotki
                     secondPlayerClass.ShipPlacementFilter(firstCoords[0], firstCoords[1], secondCoords[0], secondCoords[1]);
                     secondPlayerClass.ShowMaps(); 
                 }
-
             }
         }
         
@@ -397,6 +412,42 @@ namespace Stotki
                 return "Wrong!";
             
             return "Correct!";
+        }
+
+        static void CheatShipsGenerator(string player)
+        {
+            if (player == "Player1")
+            {
+                firstPlayerClass.playerShipsMap = new char[,]
+                {
+                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
+                };
+            }
+            else if (player == "Player2")
+            {
+                secondPlayerClass.playerShipsMap = new char[,]
+                {
+                    {'#', '#', '#', '\0', '#', '#', '#', '#', '#', '#'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'#', '#', '#', '#', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '#', '#', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '#', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '\0', '\0', '\0', '\0', '\0'},
+                    {'\0', '\0', '#', '\0', '\0', '#', '#', '#', '#', '#'},
+                };
+            }
         }
     }
 }
